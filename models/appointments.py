@@ -1,42 +1,68 @@
-from pymongo import MongoClient
-from bson.objectid import ObjectId
+from typing import List
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 from datetime import datetime
-
-# Connect to MongoDB
-client = MongoClient("mongodb://localhost:27017/")
-db = client["your_database"]  # Replace 'your_database' with your actual database name
-
-# Define the appointment collection
-appointment_collection = db["appointments"]
-
-# Define the schema
-appointment_schema = {
-    "title": {"type": "string", "required": True},
-    "date": {"type": "date", "required": True},
-    "time": {"type": "string", "required": True},
-    "duration": {"type": "number", "required": True},  # duration in minutes
-    "participants": {"type": "array", "items": {"type": "objectid", "ref": "users"}},
-    "status": {
-        "type": "string",
-        "enum": ["scheduled", "completed", "canceled"],
-        "default": "scheduled",
-    },
-}
+from bson import ObjectId
 
 
-# Insert a new appointment
-def insert_appointment(appointment_data):
-    appointment_collection.insert_one(appointment_data)
+# Mock database
+class MockDB:
+    appointments = []
 
 
-# Example usage:
-new_appointment = {
-    "title": "Meeting",
-    "date": datetime(2024, 6, 10),
-    "time": "09:00",
-    "duration": 60,
-    "participants": [ObjectId("participant_id_1"), ObjectId("participant_id_2")],
-    "status": "scheduled",
-}
+db = MockDB()
 
-insert_appointment(new_appointment)
+
+class Appointment(BaseModel):
+    title: str
+    date: datetime
+    time: str
+    duration: int
+    participants: List[ObjectId]
+    status: str = "scheduled"
+
+
+app = FastAPI()
+
+
+# Create a new appointment
+@app.post("/appointments/")
+async def create_appointment(appointment: Appointment):
+    appointment_dict = appointment.dict()
+    db.appointments.append(appointment_dict)
+    return {"message": "Appointment created successfully"}
+
+
+# Retrieve all appointments
+@app.get("/appointments/")
+async def get_all_appointments():
+    return db.appointments
+
+
+# Retrieve an appointment by ID
+@app.get("/appointments/{appointment_id}")
+async def get_appointment_by_id(appointment_id: int):
+    for appointment in db.appointments:
+        if appointment["_id"] == appointment_id:
+            return appointment
+    raise HTTPException(status_code=404, detail="Appointment not found")
+
+
+# Update an appointment by ID
+@app.put("/appointments/{appointment_id}")
+async def update_appointment(appointment_id: int, appointment: Appointment):
+    for i, a in enumerate(db.appointments):
+        if a["_id"] == appointment_id:
+            db.appointments[i] = appointment.dict()
+            return {"message": "Appointment updated successfully"}
+    raise HTTPException(status_code=404, detail="Appointment not found")
+
+
+# Delete an appointment by ID
+@app.delete("/appointments/{appointment_id}")
+async def delete_appointment(appointment_id: int):
+    for i, appointment in enumerate(db.appointments):
+        if appointment["_id"] == appointment_id:
+            del db.appointments[i]
+            return {"message": "Appointment deleted successfully"}
+    raise HTTPException(status_code=404, detail="Appointment not found")

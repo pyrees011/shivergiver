@@ -8,10 +8,11 @@ from bson import ObjectId
 from auth.auth_handler import signJWT
 from auth.auth_bearer import JWTBearer
 
-users=[]
+users = []
 
 router = APIRouter()
 user_collection = db.users
+
 
 def check_user(data: UserLoginModel):
     for user in users:
@@ -19,14 +20,16 @@ def check_user(data: UserLoginModel):
             return True
     return False
 
+
 @router.get("/users", tags=["users"])
 async def get_users():
     users = user_collection.users.find()
     return many_schema(users)
 
+
 @router.post("/user/signup", tags=["users"])
 def create_user(user: UserModel = Body(...)):
-    users.append(user) # replace with db call, making sure to hash the password first
+    users.append(user)  # replace with db call, making sure to hash the password first
     return signJWT(user.email)
 
 
@@ -34,6 +37,4 @@ def create_user(user: UserModel = Body(...)):
 def user_login(user: UserLoginModel = Body(...)):
     if check_user(user):
         return signJWT(user.email)
-    return {
-        "error": "Wrong login details!"
-    }
+    return {"error": "Wrong login details!"}
