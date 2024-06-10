@@ -1,39 +1,52 @@
-from fastapi import APIRouter, Body
+from fastapi import APIRouter, HTTPException, Depends, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from models.user import UserModel, UserLoginModel
-
-from config.mongo import db
-from schema.schemas import individual_schema, many_schema
-from bson import ObjectId
-
-from auth.auth_handler import signJWT
-from auth.auth_bearer import JWTBearer
-
-users=[]
+from auth.auth_handler import get_password_hash, verify_password, signJWT, decodeJWT
+from config.mongo_db import get_database
+from fastapi.encoders import jsonable_encoder
+from pymongo.collection import Collection
 
 router = APIRouter()
-user_collection = db.users
 
-def check_user(data: UserLoginModel):
-    for user in users:
-        if user.email == data.email and user.password == data.password:
-            return True
-    return False
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-@router.get("/users", tags=["users"])
-async def get_users():
-    users = user_collection.users.find()
-    return many_schema(users)
+# Dependency to get the database collection
+def get_user_collection(db=Depends(get_database)):
+    return db["users"]
 
-@router.post("/user/signup", tags=["users"])
-def create_user(user: UserModel = Body(...)):
-    users.append(user) # replace with db call, making sure to hash the password first
-    return signJWT(user.email)
+@router.post("/register", response_model=UserModel, tags=["users"])
+async def register_user(user: UserModel, users: Collection = Depends(get_user_collection)):
+    # Check if the user already exists
+    if await users.find_one({"email": user.email}):
+        raise HTTPException(status_code=400, detail="Email already registered")
+    user_dict = user.dict()
+    user_dict["password"] = get_password_hash(user.password)  # Hash the password
+    await users.insert_one(user_dict)
+    return user_dict
 
+@router.post("/login", tags=["users"])
+async def login_user(form_data: OAuth2PasswordRequestForm = Depends(), users: Collection = Depends(get_user_collection)):
+    user = await users.find_one({"email": form_data.username})
+    if not user or not verify_password(form_data.password, user['password']):
+        raise HTTPException(status_code=401, detail="Invalid username or password")
+    return signJWT(user['email'])
 
-@router.post("/user/login", tags=["users"])
-def user_login(user: UserLoginModel = Body(...)):
-    if check_user(user):
-        return signJWT(user.email)
-    return {
-        "error": "Wrong login details!"
-    }
+@router.get("/users", tags=["users"], dependencies=[Depends(oauth2_scheme)])
+async def get_users(users: Collection = Depends(get_user_collection)):
+    user_list = await users.find().to_list(100)
+    return user_list
+
+@router.post("/token", tags=["users"])
+async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(), users: Collection = Depends(get_user_collection)):
+    user = await users.find_one({"email": form_data.username})
+    if not user:
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+    if not verify_password(form_data.password, user['password']):
+        raise HTTPException(status_code=400, detail="Incorrect username or password")
+    return {"access_token": signJWT(user['email']), "token_type": "bearer"}
+
+@router.get("/logout", tags=["users"])
+async def logout_user(token: str = Depends(oauth2_scheme)):
+    # Here, you would handle token invalidation if using a server-side session store or a blacklist mechanism
+    return {"msg": "Logged out successfully"}
+

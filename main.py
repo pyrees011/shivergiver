@@ -1,11 +1,11 @@
 from fastapi import FastAPI
-from routes.userRoutes import router as user_router
+from config.mongo_db import app as mongo_app  # Updated import statement
 
 app = FastAPI()
 
+# Mount the MongoDB related app to handle database operations
+app.mount("/mongo", mongo_app)
 
 @app.get("/")
-def read_root():
+async def read_root():
     return {"Hello": "World"}
-
-app.include_router(user_router, prefix="/api/v1")
