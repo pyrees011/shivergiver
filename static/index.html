@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Main Page</title>
+    <!-- Add CSS styles for a better appearance -->
+    <link rel="stylesheet" href="/static/styles.css" />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+      }
+      .black-line {
+        width: 100%;
+        height: 2px;
+        background-color: #000;
+        flex-shrink: 0; /* Ensure the black line doesn't shrink */
+      }
+      .container {
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        display: flex;
+      }
+      .content {
+        flex: 1;
+        margin-right: auto; /* Move content to the left */
+      }
+      h1 {
+        color: #333;
+        text-align: center;
+      }
+      p {
+        color: #666;
+        text-align: center;
+      }
+      ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 20px 0;
+      }
+      li {
+        background-color: #f9f9f9;
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      }
+      .image-container {
+        width: calc(
+          20.33% - 15px
+        ); /* One-third of the page width minus padding */
+        margin-right: 20px; /* Move image container a bit to the left */
+      }
+      .image {
+        width: 100%;
+        max-width: 300px; /* Resize the image */
+        height: auto;
+        animation: floatAnimation 3s infinite alternate;
+      }
+      @keyframes floatAnimation {
+        0% {
+          transform: translateY(0);
+        }
+        100% {
+          transform: translateY(-10px);
+        }
+      }
+      /* CSS for the buttons */
+      button {
+        background-color: black;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        border-radius: 5px;
+        margin: 5px;
+        font-size: 16px;
+        transition: background-color 0.3s;
+      }
+      button:hover {
+        background-color: black;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="content">
+        <h1>Welcome to ShiverGiver</h1>
+        <p>This is the main page.</p>
+        <!-- Example: Display a list of users -->
+        <h2>Users</h2>
+        <ul id="user-list"></ul>
+      </div>
+      <!-- Move the image to the right -->
+      <div class="image-container">
+        <!-- Add your image here manually -->
+        <img
+          src="data:image/jpeg;base64,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"
+          alt="Image"
+          class="image"
+        />
+      </div>
+    </div>
+    <!-- Buttons placed below the div block -->
+    <div style="text-align: center; margin-top: 20px">
+      <button onclick="location.href='/login';">Login</button>
+      <button onclick="location.href='/register';">Register</button>
+    </div>
+    <!-- Add JavaScript files here -->
+    <script src="/static/scripts.js"></script>
+  </body>
+</html>

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Body, HTTPException
-from models.appointment import AppointmentModel
+from models.appointments import AppointmentModel
 from config.mongo import db
 from bson import ObjectId
 
