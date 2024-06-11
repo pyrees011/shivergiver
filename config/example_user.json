@@ -1,0 +1,8 @@
+{
+  "username": "user123",
+  "password": "securepassword123",
+  "email": "user123@example.com",
+  "age": 25,
+  "sex": "M",
+  "genre": "rock"
+}

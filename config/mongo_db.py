@@ -6,7 +6,8 @@ app = FastAPI()
 # Database URI and Client Setup
 uri = "mongodb+srv://test2:test@nosql.qmuetpj.mongodb.net/?retryWrites=true&w=majority&appName=noSQL"
 client = MongoClient(uri)
-db = client.testgenre  # This should match your actual database name
+db = client.users  # Your database name
+collection = db.accounts  # Your collection name
 
 @app.on_event("startup")
 async def startup_db_client():
