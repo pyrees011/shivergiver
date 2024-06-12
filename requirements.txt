@@ -3,3 +3,10 @@ uvicorn>=0.15.0,<0.16.0
 redis
 neo4j
 pymongo
+python-decouple
+PyJWT 
+pydantic 
+passlib 
+jose 
+email_validator 
+bcrypt 

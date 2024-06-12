@@ -43,7 +43,7 @@ async def get_user_profile(user: str ):
     store_user_data(user, user_data)
     return individual_schema(user_data)
 
-@router.get('/user/getAlluser', dependencies=[Depends(JWTBearer())], tags=['users'])
+@router.get('/user/getAllUser', dependencies=[Depends(JWTBearer())], tags=['users'])
 async def get_all_user():
     user_data = user_collection.find()
     if not user_data:

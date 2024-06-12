@@ -1,9 +1,10 @@
 import redis
+from decouple import config
 
 # Redis connection configuration
-REDIS_HOST = 'localhost'
-REDIS_PORT = 6379
-REDIS_DB = 0
+REDIS_HOST= config("REDIS_HOST")
+REDIS_PORT= config("REDIS_PORT")
+REDIS_DB= config("REDIS_DB")
 
 try:
     # Create a new connection

@@ -1,7 +1,6 @@
 # This file is responsible for signing , encoding , decoding and returning JWTS
 import time
 from datetime import datetime, timedelta
-from typing import Dict
 from fastapi import HTTPException
 
 import jwt
