@@ -38,3 +38,16 @@ def get_appointment(appointment_id):
 
 def delete_appointment(appointment_id):
     return redis_client.delete(f"appointment:{appointment_id}")
+
+def store_album(album_id, album_data):
+    key = f"album:{album_id}"
+    redis_client.hmset(key, album_data)
+    redis_client.expire(key, timedelta(hours=1))
+
+def get_album(album_id):
+    return redis_client.hgetall(f"album:{album_id}")
+
+def delete_album(album_id):
+    return redis_client.delete(f"album:{album_id}")
+
+

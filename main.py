@@ -15,4 +15,4 @@ def read_root():
 app.include_router(user_router, prefix="/api/v1")
 app.include_router(appointment_router, prefix="/api/v2")
 app.include_router(relation_router, prefix="/api/v3")
-app.include_router(album_router)
+app.include_router(album_router, prefix="/api/v4")

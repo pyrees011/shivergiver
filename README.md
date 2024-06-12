@@ -103,6 +103,12 @@ FastAPI automatically generates interactive API documentation. You can access it
 - `GET /appointments/{appointment_id}`: Retrieve a particular appointments (authentication required).
 - `PUT /appointments/{appointment_id}`: update records for a particular appointments (authentication required).
 - `DELETE /appointments/{appointment_id}`: deletes a particular appointments (authentication required).
+- `POST /albums`: Create a new album (authentication required).
+- `GET /albums`: Retrieve all albums (authentication required).
+- `GET /albums/{albums_id}`: Retrieve a particular album (authentication required).
+- `PUT /albums/{albums_id}`: update records for a particular album (authentication required).
+- `DELETE /albums/{albums_id}`: deletes a particular album (authentication required).
+
 
 ##### neo4j routes
 
