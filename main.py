@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from routes.userRoutes import router as user_router
+from routes.appointments import router as appointment_router
+
 
 app = FastAPI()
 
@@ -9,3 +11,4 @@ def read_root():
     return {"Hello": "World"}
 
 app.include_router(user_router, prefix="/api/v1")
+app.include_router(appointment_router, prefix="/api/v2")

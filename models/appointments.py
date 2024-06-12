@@ -1,20 +1,17 @@
-from pydantic import BaseModel, Field
-from datetime import datetime
-from typing import List
+from pydantic import BaseModel, Field, ValidationError
+from datetime import date
 from bson import ObjectId
-
+from typing import List
 
 class AppointmentModel(BaseModel):
     title: str
-    date: datetime
+    date: str
     time: str
     duration: int
-    participants: List[ObjectId]
+    participants: List[str]
+    status: str = Field(..., description="Status of the appointment")
 
-    STATUS_OPTIONS = ["scheduled", "completed", "canceled", "rescheduled"]
-    status: str = Field(
-        ..., description="Status of the appointment", enum=STATUS_OPTIONS
-    )
+    STATUS_OPTIONS: List = ["scheduled", "cancelled", "completed"]
 
     class Config:
         schema_extra = {
